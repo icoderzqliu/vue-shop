@@ -9,51 +9,26 @@
     <el-card>
       <el-row>
         <el-col>
-          <el-button type="primary" @click="showAddCateDialog"
-            >添加分类</el-button
-          >
+          <el-button type="primary" @click="showAddCateDialog">添加分类</el-button>
         </el-col>
       </el-row>
       <!-- 表格 -->
-      <tree-table
-        :data="cateList"
-        :columns="columns"
-        :selection-type="false"
-        :expand-type="false"
-        show-index
-        index-text="#"
-        border
-        :show-row-hover="false"
-        class="treeTable"
-      >
+      <tree-table :data="cateList" :columns="columns" :selection-type="false" :expand-type="false" show-index index-text="#" border :show-row-hover="false" class="treeTable">
         <!-- 是否有效 -->
         <template slot="isok" slot-scope="scope">
-          <i
-            v-if="scope.row.cat_deleted === false"
-            class="el-icon-success"
-            style="color:lightgreen"
-          ></i>
+          <i v-if="scope.row.cat_deleted === false" class="el-icon-success" style="color:lightgreen"></i>
           <i v-else class="el-icon-error" style="color:red"></i>
         </template>
         <!-- 排序 -->
         <template slot="order" slot-scope="scope">
           <el-tag v-if="scope.row.cat_level === 0" size="mini">一级</el-tag>
-          <el-tag
-            v-else-if="scope.row.cat_level === 1"
-            size="mini"
-            type="success"
-            >二级</el-tag
-          >
+          <el-tag v-else-if="scope.row.cat_level === 1" size="mini" type="success">二级</el-tag>
           <el-tag v-else size="mini" type="warning">三级</el-tag>
         </template>
         <!-- 操作 -->
         <template slot="option" slot-scope="">
-          <el-button type="primary" icon="el-icon-edit" size="mini"
-            >编辑</el-button
-          >
-          <el-button type="danger" icon="el-icon-delete" size="mini"
-            >删除</el-button
-          >
+          <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
         </template>
       </tree-table>
       <!-- 分页 -->
@@ -69,30 +44,13 @@
       </el-pagination>
     </el-card>
     <!-- 添加分类的对话框 -->
-    <el-dialog
-      title="添加分类"
-      :visible.sync="addCateDialogVisible"
-      width="50%"
-      @close="addCateDialogClosed"
-    >
+    <el-dialog title="添加分类" :visible.sync="addCateDialogVisible" width="50%" @close="addCateDialogClosed">
       <!-- 添加分类的表单 -->
-      <el-form
-        :model="addCateForm"
-        :rules="addCateFormRules"
-        ref="addCateFormRef"
-        label-width="100px"
-      >
-        <el-form-item label="分类名称：" prop="cat_name">
-          <el-input v-model="addCateForm.cat_name"></el-input> </el-form-item
+      <el-form :model="addCateForm" :rules="addCateFormRules" ref="addCateFormRef" label-width="100px">
+        <el-form-item label="分类名称：" prop="cat_name"> <el-input v-model="addCateForm.cat_name"></el-input> </el-form-item
         ><el-form-item label="父级分类：">
           <!-- options用于指定数据源 -->
-          <el-cascader
-            v-model="selectedKeys"
-            :options="parentCateList"
-            :props="cascaderProps"
-            @change="parentCateChanged"
-            clearable
-          ></el-cascader></el-form-item
+          <el-cascader v-model="selectedKeys" :options="parentCateList" :props="cascaderProps" @change="parentCateChanged" clearable></el-cascader></el-form-item
       ></el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addCateDialogVisible = false">取 消</el-button>
@@ -195,9 +153,7 @@ export default {
     },
     parentCateChanged() {
       if (this.selectedKeys.length > 0) {
-        this.addCateForm.cat_pid = this.selectedKeys[
-          this.selectedKeys.length - 1
-        ]
+        this.addCateForm.cat_pid = this.selectedKeys[this.selectedKeys.length - 1]
         this.addCateForm.cat_level = this.selectedKeys.length
       } else {
         this.addCateForm.cat_pid = 0
@@ -207,10 +163,7 @@ export default {
     addCate() {
       this.$refs.addCateFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.post(
-          'categories',
-          this.addCateForm
-        )
+        const { data: res } = await this.$http.post('categories', this.addCateForm)
         if (res.meta.status !== 201) return this.$message.error('添加分类失败')
         this.$message.success('添加分类成功')
         this.getCateList()
